@@ -1,7 +1,9 @@
 import os
 import bcrypt
 import dotenv
+from bson import ObjectId
 from typing import List
+from fastapi import HTTPException
 from mongoengine import *
 from cryptography.fernet import Fernet
 from entities.plan import Plan
@@ -39,7 +41,54 @@ class PlanRepository:
         plan_dict['_id'] = str(plan_dict['_id'])
         return plan_dict
     
+    from bson import ObjectId
 
     def delete_plan(self, plan_id: str):
-        PlanModel.objects(id=plan_id).delete()
-        return None
+        # Validar se o ID fornecido é válido
+        if not ObjectId.is_valid(plan_id):
+            raise HTTPException(status_code=400, detail="ID inválido")
+
+        # Buscar o plano com o ID convertido
+        plan = PlanModel.objects(id=ObjectId(plan_id)).first()
+        if not plan:
+            raise HTTPException(status_code=404, detail="Plano não encontrado")
+
+        # Deletar o plano se encontrado
+        plan.delete()
+        return {"status": "success", "message": "Plano deletado com sucesso"}
+
+        
+    def list_all_plans(self) -> List[dict]:
+        try:
+            plans = PlanModel.objects()
+            return [
+                {**plan.to_mongo().to_dict(), "_id": str(plan.id)}
+                for plan in plans
+            ]
+        except Exception as e:
+            raise Exception(f"Error fetching plans: {str(e)}")
+            
+   
+
+    def update_plan(self, plan_id: str, price: float = None, tipo: str = None, benefits: str = None) -> dict:
+        if not ObjectId.is_valid(plan_id):
+            raise HTTPException(status_code=400, detail="ID inválido")
+
+        # Montar os campos para atualização
+        update_fields = {}
+        if price is not None:
+            update_fields["set__price"] = price
+        if tipo is not None:
+            update_fields["set__tipo"] = tipo
+        if benefits is not None:
+            update_fields["set__benefits"] = benefits
+
+        if not update_fields:
+            raise ValueError("Nenhum campo válido para atualização.")
+
+        updated_count = PlanModel.objects(id=ObjectId(plan_id)).update(**update_fields)
+
+        if updated_count == 0:
+            raise HTTPException(status_code=404, detail="Plano não encontrado.")
+
+        return self.get_plan_by_id(plan_id)
