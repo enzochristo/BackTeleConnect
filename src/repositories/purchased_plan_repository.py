@@ -78,3 +78,20 @@ class PurchasedPlansRepository:
             query['customer_id'] = customer_id
         plans = PurchasedPlanModel.objects(**query)
         return [plan.to_mongo().to_dict() for plan in plans]
+    
+
+
+    def get_all_purchased_plans(self) -> list:
+        plans = PurchasedPlanModel.objects()  # Busca todos os planos
+        if not plans:
+            return []
+
+        serialized_plans = []
+        for plan in plans:
+            plan_dict = plan.to_mongo().to_dict()
+            plan_dict["_id"] = str(plan_dict["_id"])  # Serializa o ObjectId
+            plan_dict["customer_id"] = str(plan_dict["customer_id"]) if "customer_id" in plan_dict else None
+            serialized_plans.append(plan_dict)
+
+        return serialized_plans
+
