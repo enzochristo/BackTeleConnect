@@ -8,6 +8,6 @@ router = APIRouter()
 plan_repository = PlanRepository()
 get_all_plans_use_case = GetAllPlansUseCase(plan_repository)
 
-@router.get("/manager/get/all/plans", dependencies=[Depends(validate_manager_auth_token)])
+@router.get("/manager/get/all/plans")
 def get_all_plans():
     return get_all_plans_use_case.execute()
