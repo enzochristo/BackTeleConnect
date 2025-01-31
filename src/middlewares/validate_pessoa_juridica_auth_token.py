@@ -20,6 +20,7 @@ def validate_pessoa_juridica_auth_token(request: Request, response: Response):
             "pessoa_juridica_id": pessoa_juridica_id,
             "pessoa_juridica_cnpj": pessoa_juridica_cnpj
         }
+        print("Auth Payload recebido:", request.state.auth_payload)
 
     except jwt.PyJWTError:
         response.delete_cookie("pessoa_juridica_auth_token")

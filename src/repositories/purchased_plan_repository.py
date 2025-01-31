@@ -5,6 +5,7 @@ from models.purchased_plan_model import PurchasedPlanModel
 from cryptography.fernet import Fernet
 import json
 from typing import List
+from bson import ObjectId
 
 
 class PurchasedPlansRepository:
@@ -29,16 +30,34 @@ class PurchasedPlansRepository:
 
         purchased_plan_model.save()
 
-    def get_purchased_plan_by_id(self, plan_id: str) -> dict:
-        plan = PurchasedPlanModel.objects.with_id(plan_id)
-        if not plan:
-            return None
-        plan_dict = plan.to_mongo().to_dict()
-        for k in PurchasedPlanModel.sensivity_fields:
-            if k in plan_dict:
-                decrypted_data = json.loads(self.fernet.decrypt(plan_dict[k].encode()).decode())
-                plan_dict[k] = decrypted_data
-        return plan_dict
+    from bson import ObjectId
+
+    def get_plans_by_customer_id(self, customer_id: str) -> dict:
+        print(f"🔍 Debug - ID do cliente recebido como string: {customer_id}")
+
+        # Busca diretamente pelo customer_id como string
+        plans = PurchasedPlanModel.objects(customer_id=customer_id)
+
+        print(f"🔍 Debug - Planos encontrados: {plans}")
+
+        if not plans:
+            return {"status": "error", "message": "Nenhum plano encontrado"}
+
+        plans_dict = {
+            "customer_id": customer_id,
+            "plans": []
+        }
+
+        for plan in plans:
+            plan_dict = plan.to_mongo().to_dict()
+            plan_dict["_id"] = str(plan_dict["_id"])  # Converte _id para string
+            plans_dict["plans"].append(plan_dict)
+
+        print("✅ Debug - Retornando planos:", plans_dict)
+        return plans_dict
+
+
+
 
     def update_purchased_plan(self, plan_id: str, update_data: dict) -> None:
         update_fields = {}

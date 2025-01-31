@@ -75,7 +75,7 @@ class PessoaFisicasRepository:
 
     def get_plan_id(self, id: str) -> str:
         pessoa_fisica = PessoaFisicasModel.objects(id=id).first()
-        return pessoa_fisica.plan_id
+        return pessoa_fisica.plan
         
     def get_phone_number(self, id: str) -> str:
         pessoa_fisica = PessoaFisicasModel.objects(id=id).first()

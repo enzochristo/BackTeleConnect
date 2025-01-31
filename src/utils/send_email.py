@@ -8,8 +8,8 @@ def send_email(email: str, content: str, subject: str = "No subject"):
     sendgrid_client = SendGridAPIClient(api_key)
 
     message = Mail(
-        from_email=From(email="administrativo@insperjr.com", name="Onboarding"),
-        to_emails=[To(email=email)],
+        from_email=From(email="enzochristofoletti21@gmail.com", name="Teleconnect"),
+        to_emails="enzochristofoletti21@gmail.com",
         subject=subject,
         html_content=content  
     )

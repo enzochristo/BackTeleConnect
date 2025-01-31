@@ -2,7 +2,7 @@ import os
 import jwt
 from fastapi import Request, Response, HTTPException
 
-def validade_pessoa_fisica_auth_token(request: Request, response: Response):
+def validate_pessoa_fisica_auth_token(request: Request, response: Response):
     token = request.cookies.get("pessoa_fisica_auth_token")
     if not token:
         raise HTTPException(status_code=401, detail="Invalid token")
