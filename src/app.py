@@ -5,8 +5,13 @@ import os
 import glob
 import dotenv
 from importlib import import_module
+from dotenv import load_dotenv, dotenv_values
 
-dotenv.load_dotenv()
+# Carregar .env
+dotenv.load_dotenv(override=True)  # Garante que substitui variáveis do sistema
+
+# Forçar a variável correta
+os.environ["FERNET_SECRET_KEY"] = dotenv_values(".env").get("FERNET_SECRET_KEY")
 
 connect(host=f"mongodb+srv://{os.getenv('MONGO_USER')}:{os.getenv('MONGO_PWD')}@cluster0.oaeuf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 

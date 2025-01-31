@@ -13,7 +13,8 @@ class LoginUseCase:
 
     def execute(self, login_dto: LoginDTO, response: Response, request: Request):
 
-        pessoa_juridica = self.pessoa_juridica_repository.find_by_cnpj(cnpj=login_dto.cnpj).first()
+        pessoa_juridica = self.pessoa_juridica_repository.find_by_email(email=login_dto.email).first()
+
 
         # Se nenhum cliente foi encontrado ainda, retorna erro
         if not pessoa_juridica:
