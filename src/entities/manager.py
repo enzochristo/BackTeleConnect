@@ -10,3 +10,4 @@ class Manager(BaseModel):
     password: str
     reset_pwd_token: str = ""
     reset_pwd_token_sent_at: int = 0
+    comp_password: str

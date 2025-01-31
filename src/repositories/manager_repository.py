@@ -63,6 +63,10 @@ class ManagersRepository:
         manager = ManagersModel.objects(id=id).first()
         if manager:
             return manager.email
+        
+    def get_comp_password(self,id:str) -> str:
+        manager = ManagersModel.objects(id=id).first()
+        return manager.comp_password
     
     def get_cpf(self, cpf: str) -> str:
         encrypted_cpf = self.encrypt_data(cpf)
